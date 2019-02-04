@@ -3,11 +3,11 @@ const { readFileSync, writeFile } = require('fs');
 const { URL } = require('./constants');
 
 async function createTask(task) {
-  const data = await readFileSync('./todo.json', 'utf8');
+  const dataJson = await readFileSync('./todo.json', 'utf8');
 
   let todolist;
-  if (data !== '') {
-    todolist = [...JSON.parse(data)];
+  if (dataJson !== '') {
+    todolist = [...JSON.parse(dataJson)];
   } else {
     todolist = [];
   }
@@ -24,21 +24,23 @@ async function createTask(task) {
 
 async function getTodolist() {
   const response = await readFileSync('./todo.json', 'utf8');
+  
   return response;
 }
 
 async function updateTask(taskId, task) {
   const dataJson = await readFileSync('./todo.json', 'utf8');
-  const data = JSON.parse(dataJson);
+  const todolist = JSON.parse(dataJson);
 
-  const updatedData = data.map(todo => {
+  const updatedTodolist = todolist.map(todo => {
     if (todo.id === task.id) {
       todo.done = task.done;
     }
+
     return todo;
   });
 
-  const todo = JSON.stringify(updatedData);
+  const todo = JSON.stringify(updatedTodolist);
 
   writeFile('todo.json', todo, function (err) {
     if (err) throw err;
@@ -48,12 +50,12 @@ async function updateTask(taskId, task) {
 }
 
 async function deleteTask(taskId) {
-  const dataJson = await getFileData();
-  const data = JSON.parse(dataJson);
+  const dataJson = await readFileSync('./todo.json', 'utf8');
+  const todolist = JSON.parse(dataJson);
 
-  const updatedData = data.filter(todo => todo.id !== taskId);
+  const updatedTodolist = todolist.filter(todo => todo.id !== taskId);
 
-  const todo = JSON.stringify(updatedData);
+  const todo = JSON.stringify(updatedTodolist);
 
   writeFile('todo.json', todo, function (err) {
     if (err) throw err;
